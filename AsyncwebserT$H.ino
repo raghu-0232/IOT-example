@@ -1,8 +1,3 @@
-/*********
-  Rui Santos
-  Complete project details at https://randomnerdtutorials.com/esp8266-dht11dht22-temperature-and-humidity-web-server-with-arduino-ide/
-*********/
-
 // Import required libraries
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -18,11 +13,10 @@ const char* password = "7093081041";
 
 #define DHTPIN 12     // Digital pin connected to the DHT sensor
 
-// Uncomment the type of sensor in use:
+// Type of sensor:
 #define DHTTYPE    DHT11     // DHT 11
-//#define DHTTYPE    DHT22     // DHT 22 (AM2302)
-//#define DHTTYPE    DHT21     // DHT 21 (AM2301)
 
+//begin dht sensor 
 DHT dht(DHTPIN, DHTTYPE);
 
 // current temperature & humidity, updated in loop()
