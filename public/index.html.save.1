@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temperature and Humidity</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: 
+Code	Color names
+#000000	Black (W3C)
+#040720	Black Blue
+#0C090A	Night
+#34282C	Charcoal
+#3B3131	Oil
+#3A3B3C	Dark Gray
+#454545	Light Black
+#413839	Black Cat
+#3D3C3A	Iridium
+#463E3F	Black Eel
+#4C4646	Black Cow
+#504A4B	Gray Wolf
+#565051	Vampire Gray
+#52595D	Iron Gray
+#5C5858	Gray Dolphin
+#625D5D	Carbon Gray
+#666362	Ash Gray
+#696969	DimGray or DimGrey (W3C)
+#686A6C	Nardo Gray
+#6D6968	Cloudy Gray
+#726E6D	Smokey Gray
+#736F6E	Alien Gray
+#757575	Sonic Silver
+#797979	Platinum Gray
+#837E7C	Granite
+#808080	Gray or Grey (W3C)
+#848482	Battleship Gray
+#8C8C8C	Dark Gainsboro
+#8D918D	Gunmetal Gray
+#A9A9A9	DarkGray or DarkGrey (W3C)
+#B6B6B4	Gray Cloud
+#C0C0C0	Silver (W3C)
+#C9C0BB	Pale Silver
+#D1D0CE	Gray Goose
+#CECECE	Platinum Silver
+#D3D3D3	LightGray or LightGrey (W3C)
+#DADBDD	Silver White
+#DCDCDC	Gainsboro (W3C)
+#E5E4E2	Platinum
+#BCC6CC	Metallic Silver
+#98AFC7	Blue Gray
+#838996	Roman Silver
+#778899	LightSlateGray or LightSlateGrey (W3C)
+#708090	SlateGray or SlateGrey (W3C)
+#6D7B8D	Rat Gray
+#657383	Slate Granite Gray
+#616D7E	Jet Gray
+#646D7E	Mist Blue
+#566D7E	Marble Blue
+#737CA1	Slate Blue Grey
+#728FCE	Light Purple Blue
+#4863A0	Azure Blue
+#2F539B	Estoril Blue
+#2B547E	Blue Jay
+#36454F	Charcoal Blue
+#29465B	Dark Blue Grey
+#2B3856	Dark Slate
+#123456	Deep-Sea Blue
+#151B54	Night Blue
+#191970	MidnightBlue (W3C)
+#000080	Navy (W3C)
+#151B8D	Denim Dark Blue
+#00008B	DarkBlue (W3C)
+#15317E	Lapis Blue
+#0000A0	New Midnight Blue
+#0000A5	Earth Blue
+#0020C2	Cobalt Blue
+#0000CD	MediumBlue (W3C)
+#0041C2	Blueberry Blue
+#2916F5	Canary Blue
+#0000FF	Blue (W3C)
+#0002FF	Samco Blue
+#0909FF	Bright Blue
+#1F45FC	Blue Orchid
+#2554C7	Sapphire Blue
+#1569C7	Blue Eyes
+#1974D2	Bright Navy Blue
+#2B60DE	Balloon Blue
+#4169E1	RoyalBlue (W3C)
+#2B65EC	Ocean Blue
+#306EFF	Blue Ribbon
+#157DEC	Blue Dress
+#1589FF;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #f0f0f0;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    #temperature, #humidity {
+      padding: 10px;
+      border: 1px solid #f0f0f0;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Temperature and Humidity Data</h1>
+  <table>
+    <tr>
+      <th>Temperature (°C)</th>
+      <th>Humidity (%)</th>
+    </tr>
+    <tr>
+      <td id="temperature">Loading...</td>
+      <td id="humidity">Loading...</td>
+    </tr>
+  </table>
+
+  <script>
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+
+        // Update the table with the fetched data
+        document.getElementById('temperature').textContent = data.temp;
+        document.getElementById('humidity').textContent = data.hum;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    // Fetch data initially and then every 10 seconds
+    fetchData();
+    setInterval(fetchData, 10000);
+  </script>
+</body>
+</html>

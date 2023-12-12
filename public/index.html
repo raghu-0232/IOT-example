@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.5">
+  <title>Temperature and Humidity</title>
+  <style>
+    body {
+      font-family: Arial;
+      line-height: 1.0;
+      margin: 10px;
+      background-color: #34495e;
+    }
+
+    h1 {
+      color: #060606;
+    }
+
+    table {
+      width: 20%;
+      margin: 20px;
+      border-collapse: seperate;
+      background-color: #ffffff;
+      overflow: hidden;
+ }
+
+
+
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccccff;
+    }
+
+    th {
+      background-color: #ffffff;
+    }
+
+    #temperature, #humidity {
+      padding: 10px;
+      border: 1px solid #454545;
+    }
+  </style>
+</head>
+<body>
+  <h1>Temperature and Humidity at Vuyyuru</h1>
+  <table>
+    <tr>
+      <th>Temperature (°C)</th>
+      <th>Humidity (%)</th>
+    </tr>
+    <tr>
+      <td id="temperature">Loading...</td>
+      <td id="humidity">Loading...</td>
+    </tr>
+  </table>
+
+  <script>
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+
+        // Update the table with the fetched data
+        document.getElementById('temperature').textContent = data.temp;
+        document.getElementById('humidity').textContent = data.hum;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    // Fetch data initially and then every 10 seconds
+    fetchData();
+    setInterval(fetchData, 10000);
+  </script>
+</body>
+</html>
