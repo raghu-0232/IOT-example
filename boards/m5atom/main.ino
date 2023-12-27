@@ -22,6 +22,8 @@ float h = 0.0;
 // Timing settings
 const long interval = 10000;  // Interval between sensor readings
 unsigned long previousMillis = 0;
+const long deepSleepInterval = 10 * 60 * 1000000;  // Deep sleep interval in microseconds (10 minutes)
+
 
 void setup()
 {
@@ -85,6 +87,9 @@ void loop()
     }
 
     delay(1000); // Wait for a moment before the next reading
+
+    // Deep sleep
+    esp_deep_sleep(deepSleepInterval);
   }
 }
 
