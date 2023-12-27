@@ -4,7 +4,6 @@
 #include <DHT.h>
 #include "secrets/Secrets.h"
 
-
 #define DHTPIN 25  // M5Atom uses GPIO 25 for DHT
 #define DHTTYPE DHT11
 
