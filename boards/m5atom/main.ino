@@ -22,7 +22,8 @@ float h = 0.0;
 // Timing settings
 const long interval = 10000;  // Interval between sensor readings
 unsigned long previousMillis = 0;
-const long deepSleepInterval = 10 * 60 * 1000000;  // Deep sleep interval in microseconds (10 minutes)
+const long deepSleepInterval = 9 * 60 * 1000000 + 57 * 1000000;  // Deep sleep interval in microseconds (9 minutes and 57 seconds)
+
 
 void setup() {
   M5.begin();
