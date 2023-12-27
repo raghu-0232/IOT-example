@@ -60,14 +60,14 @@ void loop() {
     }
 
     if (t == 0.0 && h == 0.0) {
-      if (publishToMQTT("test", "Sensor not connected or error occurred", 1)) {
+      if (publishToMQTT("mqttTopic", "Sensor not connected or error occurred", 1)) {
         Serial.println("Error message published to MQTT");
       } else {
         Serial.println("Failed to publish error message to MQTT. Retrying in 5 seconds...");
       }
     } else {
       String payload = "{\"temperature\":" + String(t) + ",\"humidity\":" + String(h) + "}";
-      if (publishToMQTT("test", payload, 1)) {
+      if (publishToMQTT("mqttTopic", payload, 1)) {
         Serial.println("Data published to MQTT");
       } else {
         Serial.println("Failed to publish data to MQTT. Retrying in 5 seconds...");
