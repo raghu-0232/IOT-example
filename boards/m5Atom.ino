@@ -2,13 +2,8 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <DHT.h>
+#include "secrets/Secrets.h"
 
-const char *ssid = "Ravi";
-const char *password = "7093081041";
-const char *mqttBroker = "65.0.144.52";  // Replace with your MQTT broker address
-const int mqttPort = 1883;  // Default MQTT port
-const char *mqttUser = "raghu";  // Replace with your MQTT username
-const char *mqttPassword = "123456";  // Replace with your MQTT password
 
 #define DHTPIN 25  // M5Atom uses GPIO 25 for DHT
 #define DHTTYPE DHT11
@@ -68,11 +63,34 @@ void loop()
       reconnect();
     }
 
-    // Create JSON payload
-    String payload = "{\"temperature\":" + String(t) + ",\"humidity\":" + String(h) + "}";
+    // Check if temperature and humidity values are zero
+    if (t == 0.0 && h == 0.0)
+    {
+      // Publish an error message to MQTT with the custom topic
+      if (publishToMQTT("test", "Sensor not connected or error occurred"))
+      {
+        Serial.println("Error message published to MQTT");
+      }
+      else
+      {
+        Serial.println("Failed to publish error message to MQTT. Retrying in 5 seconds...");
+      }
+    }
+    else
+    {
+      // Create JSON payload
+      String payload = "{\"temperature\":" + String(t) + ",\"humidity\":" + String(h) + "}";
 
-    // Publish payload to MQTT topic
-    client.publish("m5Atom/dht", payload.c_str());
+      // Publish payload to MQTT with the custom topic
+      if (publishToMQTT("test", payload))
+      {
+        Serial.println("Data published to MQTT");
+      }
+      else
+      {
+        Serial.println("Failed to publish data to MQTT. Retrying in 5 seconds...");
+      }
+    }
 
     delay(1000); // Wait for a moment before the next reading
   }
@@ -94,5 +112,20 @@ void reconnect()
       Serial.println(" Retrying in 5 seconds");
       delay(5000);
     }
+  }
+}
+
+bool publishToMQTT(const char *topic, const String &payload)
+{
+  if (client.publish(topic, payload.c_str()))
+  {
+    return true;
+  }
+  else
+  {
+    Serial.print("Failed to publish to topic ");
+    Serial.print(topic);
+    Serial.println(". Retrying...");
+    return false;
   }
 }
