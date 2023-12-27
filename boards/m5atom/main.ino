@@ -24,9 +24,7 @@ const long interval = 10000;  // Interval between sensor readings
 unsigned long previousMillis = 0;
 const long deepSleepInterval = 10 * 60 * 1000000;  // Deep sleep interval in microseconds (10 minutes)
 
-
-void setup()
-{
+void setup() {
   M5.begin();
   Serial.begin(115200);
 
@@ -40,48 +38,36 @@ void setup()
   client.setServer(mqttBroker, mqttPort);
 }
 
-void loop()
-{
+void loop() {
   M5.update();
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval)
-  {
+  if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    
+
     // Read sensor data
     readSensorData();
 
     // Connect to MQTT broker if not connected
-    if (!client.connected())
-    {
+    if (!client.connected()) {
       reconnect();
     }
 
     // Check if temperature and humidity values are zero
-    if (t == 0.0 && h == 0.0)
-    {
+    if (t == 0.0 && h == 0.0) {
       // Publish an error message to MQTT
-      if (publishToMQTT(mqttTopic, "Sensor not connected or error occurred"))
-      {
+      if (publishToMQTT(mqttTopic, "Sensor not connected or error occurred")) {
         Serial.println("Error message published to MQTT");
-      }
-      else
-      {
+      } else {
         Serial.println("Failed to publish error message to MQTT. Retrying in 5 seconds...");
       }
-    }
-    else
-    {
+    } else {
       // Create JSON payload
       String payload = "{\"temperature\":" + String(t) + ",\"humidity\":" + String(h) + "}";
 
       // Publish payload to MQTT
-      if (publishToMQTT(mqttTopic, payload))
-      {
+      if (publishToMQTT(mqttTopic, payload)) {
         Serial.println("Data published to MQTT");
-      }
-      else
-      {
+      } else {
         Serial.println("Failed to publish data to MQTT. Retrying in 5 seconds...");
       }
     }
@@ -93,44 +79,34 @@ void loop()
   }
 }
 
-void setupWiFi()
-{
+void setupWiFi() {
   WiFi.begin(ssid, password);
   Serial.println("Connecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED)
-  {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println(".");
   }
   Serial.println("Connected to WiFi, IP address: " + WiFi.localIP().toString());
 }
 
-void readSensorData()
-{
+void readSensorData() {
   float newT = dht.readTemperature();
-  if (!isnan(newT))
-  {
+  if (!isnan(newT)) {
     t = newT;
   }
 
   float newH = dht.readHumidity();
-  if (!isnan(newH))
-  {
+  if (!isnan(newH)) {
     h = newH;
   }
 }
 
-void reconnect()
-{
-  while (!client.connected())
-  {
+void reconnect() {
+  while (!client.connected()) {
     Serial.println("Connecting to MQTT broker...");
-    if (client.connect("M5AtomClient"))
-    {
+    if (client.connect("M5AtomClient")) {
       Serial.println("Connected to MQTT broker");
-    }
-    else
-    {
+    } else {
       Serial.print("Failed, rc=");
       Serial.print(client.state());
       Serial.println(" Retrying in 5 seconds");
@@ -139,14 +115,10 @@ void reconnect()
   }
 }
 
-bool publishToMQTT(const char *topic, const String &payload)
-{
-  if (client.publish(topic, payload.c_str()))
-  {
+bool publishToMQTT(const char *topic, const String &payload) {
+  if (client.publish(topic, payload.c_str())) {
     return true;
-  }
-  else
-  {
+  } else {
     Serial.print("Failed to publish to topic ");
     Serial.print(topic);
     Serial.println(". Retrying...");
