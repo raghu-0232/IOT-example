@@ -1,5 +1,3 @@
-Sure! Here's an organized and formatted version of the `README.md` for setting up an MQTT Mosquitto Broker on AWS EC2, including testing instructions:
-
 ---
 
 # Setting Up MQTT Mosquitto Broker on AWS EC2
