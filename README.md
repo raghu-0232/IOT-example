@@ -26,6 +26,10 @@ This project demonstrates a complete IoT setup for monitoring temperature and hu
 4. **Node.js Web Server**: Serves a webpage to display sensor data, communicates with MQTT broker and MySQL database, secured with SSL.
 5. **ESP32 M5 Atom**: Programmed to read data from the DHT11 sensor and publish it to the MQTT broker.
 
+## Architechture
+![System Architecture](images/Architechture.png)
+
+
 ## Setup
 
 ### MQTT Broker Setup
