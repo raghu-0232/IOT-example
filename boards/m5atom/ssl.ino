@@ -2,7 +2,11 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <WiFiClientSecure.h>
-#include "secrets/Secrets.h"
+#include <ArduinoJson.h>  // Include the ArduinoJson library
+#include "secrets/Secrets.h"  // Make sure this file contains your WiFi and MQTT settings
+
+String offlineMessage;
+bool hasOfflineMessage = false;
 
 WiFiClientSecure espClient;
 PubSubClient client(espClient);
@@ -19,23 +23,42 @@ void connectToWiFi() {
   Serial.println(WiFi.localIP());
 }
 
-#include <ArduinoJson.h>  // Include the ArduinoJson library
-
 void publishTestMessage() {
-  // Create a JSON object
-  StaticJsonDocument<200> jsonDoc; // Adjust size based on your data needs
-  jsonDoc["message"] = "Hello MQTT";
-  //jsonDoc["timestamp"] = millis();
+  if (WiFi.status() != WL_CONNECTED) {
+    // Store message for later if not connected
+    offlineMessage = "Hello MQTT";
+    hasOfflineMessage = true;
+  } else {
+    StaticJsonDocument<200> jsonDoc;
+    jsonDoc["message"] = "Hello MQTT";
+    char jsonBuffer[256];
+    serializeJson(jsonDoc, jsonBuffer);
 
-  // Convert JSON object to string
-  char jsonBuffer[256];
-  serializeJson(jsonDoc, jsonBuffer);
-
-  // Publish the JSON string to the MQTT topic
-  client.publish("test", jsonBuffer);
-  Serial.println("JSON message published to test topic");
+    client.publish("test", jsonBuffer);
+    Serial.println("JSON message published to test topic");
+  }
 }
 
+void reconnectToMQTT() {
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    if (client.connect("ESP32Client")) {
+      Serial.println("Connected");
+      client.subscribe("yourTopic");
+
+      if (hasOfflineMessage) {
+        client.publish("test", offlineMessage.c_str());
+        Serial.println("Offline message published to test topic");
+        hasOfflineMessage = false; // Reset the flag
+      }
+    } else {
+      Serial.print("Failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" Trying again in 5 seconds");
+      delay(5000);
+    }
+  }
+}
 
 void callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Message arrived on topic: ");
@@ -45,21 +68,6 @@ void callback(char* topic, byte* message, unsigned int length) {
     Serial.print((char)message[i]);
   }
   Serial.println();
-}
-
-void reconnectToMQTT() {
-  while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    if (client.connect("ESP32Client")) {
-      Serial.println("Connected");
-      client.subscribe("yourTopic");
-    } else {
-      Serial.print("Failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" Trying again in 5 seconds");
-      delay(5000);
-    }
-  }
 }
 
 void setup() {
