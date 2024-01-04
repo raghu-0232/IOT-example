@@ -69,5 +69,3 @@ Download and install the Arduino IDE from the [Arduino website](https://www.ardu
 - Verify that all necessary libraries are installed correctly.
 
 ---
-
-This README offers a structured guide to setting up and programming the ESP32 M5Atom Lite, including connecting a DHT11 sensor for temperature and humidity measurement.
