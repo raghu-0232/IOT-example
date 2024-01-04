@@ -1,16 +1,16 @@
 ---
 
-# ESP32 M5Atom Lite Setup with Arduino IDE
+## ESP32 M5Atom Lite Setup with Arduino IDE
 
 This guide provides instructions for setting up the Arduino IDE to work with the ESP32 M5Atom Lite microcontroller. It includes steps for installing necessary boards, libraries, and uploading code to the device.
 
-## Prerequisites
+### Prerequisites
 
 - A computer with Arduino IDE installed.
 - ESP32 M5Atom Lite microcontroller.
 - USB cable for connecting the ESP32 to your computer.
 
-## Arduino IDE Setup
+### Arduino IDE Setup
 
 ### Step 1: Install Arduino IDE
 
@@ -43,14 +43,30 @@ If you haven't already installed the Arduino IDE, download it from the [Arduino 
 2. In the Arduino IDE, go to `Tools > Board` and select "M5Stick-C" (as it's compatible with M5Atom Lite).
 3. Select the correct COM port in `Tools > Port`. (The COM port number will vary and can be identified in the Device Manager on Windows or by using `ls /dev/tty.*` in the Terminal on macOS.)
 
-## Uploading the Code
+### Step 5: Connecting DHT11 Sensor to ESP32 M5 Atom
+
+This guide describes how to connect a DHT11 temperature and humidity sensor to an ESP32-based M5 Atom microcontroller. The DHT11 sensor is a simple and inexpensive device for measuring ambient temperature and humidity.
+
+
+#### Wiring Diagram
+
+
+1. **Turn off the M5 Atom**: Ensure that the M5 Atom is not connected to power or USB during the wiring process.
+2. **Connect GND**: Use a jumper wire to connect the GND pin of the DHT11 sensor to a GND pin on the M5 Atom.
+3. **Connect VCC**: Use another jumper wire to connect the VCC pin of the DHT11 (usually marked as '+') to a 3.3V pin on the M5 Atom.
+4. **Connect Data Pin**: Finally, connect the data pin of the DHT11 to GPIO 25 on the M5 Atom using a jumper wire.
+5. **Power on the M5 Atom**: Once all connections are securely made, power on the M5 Atom.
+
+
+
+### Step 6:Uploading the Code
 
 1. **Copy the provided code** into a new sketch in the Arduino IDE. Maintain the directory structure same for secrets where you keep Secrets.h
 2. **Ensure that your ESP32 is still connected** to your computer.
 3. Click the "Upload" button (right arrow icon) in the Arduino IDE. This will compile the code and upload it to your ESP32 M5Atom Lite.
 4. Once uploaded, the ESP32 will execute the code. Monitor the output using the Serial Monitor in the Arduino IDE.
 
-## Troubleshooting
+### Troubleshooting
 
 - If the upload fails, check that you've selected the correct COM port and board.
 - Some ESP32 boards require pressing a boot button on the board during the upload process.
