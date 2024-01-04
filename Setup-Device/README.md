@@ -1,75 +1,73 @@
 ---
 
-## ESP32 M5Atom Lite Setup with Arduino IDE
+# ESP32 M5Atom Lite Setup with Arduino IDE
 
-This guide provides instructions for setting up the Arduino IDE to work with the ESP32 M5Atom Lite microcontroller. It includes steps for installing necessary boards, libraries, and uploading code to the device.
+This guide provides comprehensive instructions for setting up the Arduino IDE to work with the ESP32 M5Atom Lite microcontroller. It covers the installation of necessary boards, libraries, and details on how to upload code to the device.
 
-### Prerequisites
+## Table of Contents
+1. [Prerequisites](#prerequisites)
+2. [Arduino IDE Setup](#arduino-ide-setup)
+3. [Connecting DHT11 Sensor to ESP32 M5 Atom](#connecting-dht11-sensor-to-esp32-m5-atom)
+4. [Uploading the Code](#uploading-the-code)
+5. [Troubleshooting](#troubleshooting)
 
+<a name="prerequisites"></a>
+## Prerequisites
 - A computer with Arduino IDE installed.
 - ESP32 M5Atom Lite microcontroller.
 - USB cable for connecting the ESP32 to your computer.
 
-### Arduino IDE Setup
+<a name="arduino-ide-setup"></a>
+## Arduino IDE Setup
 
 ### Step 1: Install Arduino IDE
-
-If you haven't already installed the Arduino IDE, download it from the [Arduino website](https://www.arduino.cc/en/software) and follow the installation instructions for your operating system.
+Download and install the Arduino IDE from the [Arduino website](https://www.arduino.cc/en/software).
 
 ### Step 2: Install ESP32 Board in Arduino IDE
-
-1. **Open Arduino IDE**, go to `File > Preferences`.
-2. In the "Additional Board Manager URLs" field, add the following URL:
+1. In Arduino IDE, navigate to `File > Preferences`.
+2. Add the following URLs to the "Additional Board Manager URLs" field:
    ```
    https://dl.espressif.com/dl/package_esp32_index.json
    http://arduino.esp8266.com/stable/package_esp8266com_index.json
    https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
    ```
-   Click "OK" to close the preferences window.
-3. Go to `Tools > Board > Boards Manager`, search for "ESP32", and install the latest version of the "ESP32 by Espressif Systems" board.
+   Click "OK" to save.
+3. Go to `Tools > Board > Boards Manager`, search for "ESP32" and install the "ESP32 by Espressif Systems" board.
 
 ### Step 3: Install Required Libraries
-
-1. **Open Arduino IDE**, go to `Sketch > Include Library > Manage Libraries`.
-2. Search and install the following libraries:
+1. Go to `Sketch > Include Library > Manage Libraries`.
+2. Install the following libraries:
    - `WiFi`
    - `PubSubClient`
    - `ArduinoJson`
-   - You may also need specific libraries for M5Atom Lite if your project requires them.
+   - Additional libraries specific to M5Atom Lite, if required.
 
 ### Step 4: Selecting the Board and Port
+1. Connect the ESP32 M5Atom Lite to your computer via USB.
+2. Select "M5Stick-C" from `Tools > Board`.
+3. Choose the correct COM port from `Tools > Port`.
 
-1. Connect your ESP32 M5Atom Lite to your computer via a USB cable.
-2. In the Arduino IDE, go to `Tools > Board` and select "M5Stick-C" (as it's compatible with M5Atom Lite).
-3. Select the correct COM port in `Tools > Port`. (The COM port number will vary and can be identified in the Device Manager on Windows or by using `ls /dev/tty.*` in the Terminal on macOS.)
+<a name="connecting-dht11-sensor-to-esp32-m5-atom"></a>
+## Connecting DHT11 Sensor to ESP32 M5 Atom
 
-### Step 5: Connecting DHT11 Sensor to ESP32 M5 Atom
+### Wiring Diagram
+- **GND to GND**: Connect the GND pin of the DHT11 to the GND on the M5 Atom.
+- **VCC to 3.3V**: Connect the VCC pin of the DHT11 to a 3.3V pin on the M5 Atom.
+- **Data to GPIO 25**: Connect the data pin of the DHT11 to GPIO 25 on the M5 Atom.
+- **Power On**: Ensure all connections are secure before powering on the M5 Atom.
 
-This guide describes how to connect a DHT11 temperature and humidity sensor to an ESP32-based M5 Atom microcontroller. The DHT11 sensor is a simple and inexpensive device for measuring ambient temperature and humidity.
+<a name="uploading-the-code"></a>
+## Uploading the Code
+1. Copy the provided code into a new sketch in the Arduino IDE. Ensure the `Secrets.h` file is in the correct directory.
+2. With the ESP32 connected, click the "Upload" button in the Arduino IDE.
+3. The code will compile and upload to the ESP32. Use the Serial Monitor to view the output.
 
-
-#### Wiring Diagram
-
-
-1. **Turn off the M5 Atom**: Ensure that the M5 Atom is not connected to power or USB during the wiring process.
-2. **Connect GND**: Use a jumper wire to connect the GND pin of the DHT11 sensor to a GND pin on the M5 Atom.
-3. **Connect VCC**: Use another jumper wire to connect the VCC pin of the DHT11 (usually marked as '+') to a 3.3V pin on the M5 Atom.
-4. **Connect Data Pin**: Finally, connect the data pin of the DHT11 to GPIO 25 on the M5 Atom using a jumper wire.
-5. **Power on the M5 Atom**: Once all connections are securely made, power on the M5 Atom.
-
-
-
-### Step 6:Uploading the Code
-
-1. **Copy the provided code** into a new sketch in the Arduino IDE. Maintain the directory structure same for secrets where you keep Secrets.h
-2. **Ensure that your ESP32 is still connected** to your computer.
-3. Click the "Upload" button (right arrow icon) in the Arduino IDE. This will compile the code and upload it to your ESP32 M5Atom Lite.
-4. Once uploaded, the ESP32 will execute the code. Monitor the output using the Serial Monitor in the Arduino IDE.
-
-### Troubleshooting
-
-- If the upload fails, check that you've selected the correct COM port and board.
-- Some ESP32 boards require pressing a boot button on the board during the upload process.
-- Make sure all required libraries are correctly installed.
+<a name="troubleshooting"></a>
+## Troubleshooting
+- Ensure the correct COM port and board are selected in the Arduino IDE.
+- Some ESP32 boards might require pressing the boot button during the upload process.
+- Verify that all necessary libraries are installed correctly.
 
 ---
+
+This README offers a structured guide to setting up and programming the ESP32 M5Atom Lite, including connecting a DHT11 sensor for temperature and humidity measurement.
