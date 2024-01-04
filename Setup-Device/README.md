@@ -22,6 +22,8 @@ If you haven't already installed the Arduino IDE, download it from the [Arduino 
 2. In the "Additional Board Manager URLs" field, add the following URL:
    ```
    https://dl.espressif.com/dl/package_esp32_index.json
+   http://arduino.esp8266.com/stable/package_esp8266com_index.json
+   https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
    ```
    Click "OK" to close the preferences window.
 3. Go to `Tools > Board > Boards Manager`, search for "ESP32", and install the latest version of the "ESP32 by Espressif Systems" board.
