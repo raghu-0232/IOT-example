@@ -45,7 +45,7 @@ If you haven't already installed the Arduino IDE, download it from the [Arduino 
 
 ## Uploading the Code
 
-1. **Copy the provided code** into a new sketch in the Arduino IDE.
+1. **Copy the provided code** into a new sketch in the Arduino IDE. Maintain the directory structure same for secrets where you keep Secrets.h
 2. **Ensure that your ESP32 is still connected** to your computer.
 3. Click the "Upload" button (right arrow icon) in the Arduino IDE. This will compile the code and upload it to your ESP32 M5Atom Lite.
 4. Once uploaded, the ESP32 will execute the code. Monitor the output using the Serial Monitor in the Arduino IDE.
