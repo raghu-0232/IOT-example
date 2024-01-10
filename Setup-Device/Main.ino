@@ -1,110 +1,107 @@
-// Include necessary libraries
 #include <M5Atom.h>
 #include <WiFi.h>
-#include <PubSubClient.h>
 #include <WiFiClientSecure.h>
-#include <ArduinoJson.h>  // For handling JSON serialization
-#include "secrets/Secrets.h"  // Contains WiFi and MQTT settings
+#include <PubSubClient.h>
+#include <DHT.h>
+#include "secrets/Secrets.h"
 
-// Global variables
-String offlineMessage; // Stores the message when offline
-bool hasOfflineMessage = false; // Flag to check if there's an offline message
+#define DHTPIN 25 // M5Atom uses GPIO 25 for DHT
+#define DHTTYPE DHT11
 
-// Initialize the WiFi and MQTT client objects
-WiFiClientSecure espClient; // For SSL/TLS connection
-PubSubClient client(espClient); // MQTT client
+DHT dht(DHTPIN, DHTTYPE);
 
-// Function to connect to WiFi
-void connectToWiFi() {
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password); // Connect to WiFi network
-  
-  // Wait for connection
+WiFiClientSecure espClient;
+PubSubClient client(espClient);
+
+float t = 0.0;
+float h = 0.0;
+
+const long interval = 10000;
+unsigned long previousMillis = 0;
+
+
+void setup() {
+  M5.begin();
+  Serial.begin(115200);
+  dht.begin();
+
+  WiFi.begin(ssid, password);
+  Serial.println("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+    delay(1000);
+    Serial.println(".");
   }
-  Serial.println("\nWiFi connected. IP address: ");
-  Serial.println(WiFi.localIP()); // Print the IP address
+  Serial.println(WiFi.localIP());
+
+  espClient.setCertificate(clientCertificate);
+
+
+  client.setServer(mqtt_server, mqtt_port);
 }
 
-// Function to publish a test message
-void publishTestMessage() {
-  // Check WiFi connection
-  if (WiFi.status() != WL_CONNECTED) {
-    // Store the message if not connected
-    offlineMessage = "Hello MQTT";
-    hasOfflineMessage = true;
-  } else {
-    // Create a JSON document
-    StaticJsonDocument<200> jsonDoc;
-    jsonDoc["message"] = "Hello MQTT";
-    char jsonBuffer[256];
-    serializeJson(jsonDoc, jsonBuffer); // Serialize JSON object to string
+void loop() {
+  M5.update();
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    float newT = dht.readTemperature();
+    if (!isnan(newT)) {
+      t = newT;
+    }
 
-    // Publish the JSON string to the MQTT topic
-    client.publish("test", jsonBuffer);
-    Serial.println("JSON message published to test topic");
-  }
-}
+    float newH = dht.readHumidity();
+    if (!isnan(newH)) {
+      h = newH;
+    }
 
-// Function to reconnect to MQTT broker
-void reconnectToMQTT() {
-  while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    if (client.connect("ESP32Client")) {
-      Serial.println("Connected");
-      client.subscribe("yourTopic"); // Subscribe to a topic
-      
-      // Check if there's an offline message
-      if (hasOfflineMessage) {
-        client.publish("test", offlineMessage.c_str());
-        Serial.println("Offline message published to test topic");
-        hasOfflineMessage = false; // Reset flag
+    if (!client.connected()) {
+      reconnect();
+    }
+
+    if (t == 0.0 && h == 0.0) {
+      if (publishToMQTT("mqttTopic", "Sensor not connected or error occurred", 1)) {
+        Serial.println("Error message published to MQTT");
+      } else {
+        Serial.println("Failed to publish error message to MQTT. Retrying in 5 seconds...");
       }
+    } else {
+      String payload = "{\"temperature\":" + String(t) + ",\"humidity\":" + String(h) + "}";
+      if (publishToMQTT("mqttTopic", payload, 1)) {
+        Serial.println("Data published to MQTT");
+      } else {
+        Serial.println("Failed to publish data to MQTT. Retrying in 5 seconds...");
+      }
+    }
+
+    delay(1000);
+  }
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    Serial.println("Connecting to MQTT broker...");
+    if (client.connect("M5AtomClient")) {
+      Serial.println("Connected to MQTT broker");
     } else {
       Serial.print("Failed, rc=");
       Serial.print(client.state());
-      Serial.println(" Trying again in 5 seconds");
+      Serial.println(" Retrying in 5 seconds");
       delay(5000);
     }
   }
 }
 
-// Callback function to handle incoming messages
-void callback(char* topic, byte* message, unsigned int length) {
-  Serial.print("Message arrived on topic: ");
-  Serial.print(topic);
-  Serial.print(". Message: ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]); // Print each byte of the message
-  }
-  Serial.println();
-}
+bool publishToMQTT(const char *topic, const String &payload, int qos) {
+  // Convert String payload to a character array.
+  const char* charPayload = payload.c_str();
 
-// Setup function
-void setup() {
-  Serial.begin(115200); // Start serial communication
-  connectToWiFi(); // Connect to WiFi
-  client.setServer(mqtt_server, mqtt_port); // Set MQTT server and port
-  client.setCallback(callback); // Set the callback function
-  espClient.setCACert(ca_cert); // Set the CA certificate for SSL/TLS
-}
-
-// Main loop function
-void loop() {
-  // Check MQTT connection
-  if (!client.connected()) {
-    reconnectToMQTT(); // Reconnect if disconnected
+  // Publish with the correct parameters - topic, payload, and QoS
+  if (client.publish(topic, charPayload, qos)) {
+    return true;
   } else {
-    client.loop(); // Maintain MQTT connection
-    unsigned long currentMillis = millis();
-    static unsigned long lastPublishTime = 0;
-    // Publish a message every 10 seconds
-    if (currentMillis - lastPublishTime >= 10000) {
-      lastPublishTime = currentMillis;
-      publishTestMessage(); // Publish test message
-    }
+    Serial.print("Failed to publish to topic ");
+    Serial.print(topic);
+    Serial.println(". Retrying...");
+    return false;
   }
 }
