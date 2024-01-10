@@ -7,7 +7,7 @@ const char* password = "password"; // Replace with your WiFi password
 // MQTT Broker Settings
 const char* mqtt_server = "mqtt_server.com"; // Replace with your MQTT broker address
 const int mqtt_port = 8883; // MQTT SSL port, usually 8883
-
+const char* mqttTopic = "test";
 // SSL Certificate for the MQTT broker
 const char* ca_cert = \
 "-----BEGIN CERTIFICATE-----\n" \
